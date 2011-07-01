@@ -16,10 +16,14 @@ namespace OrganizeMyPhotos
                 var image = BitmapFrame.Create(fileStream);
                 var metadata = (BitmapMetadata)image.Metadata;
 
-                if (string.IsNullOrEmpty(metadata.DateTaken))
+                try
+                {
+                    return DateTime.Parse(metadata.DateTaken);
+                }
+                catch
+                {
                     return null;
-
-                return DateTime.Parse(metadata.DateTaken);
+                }
             }
         }
     }
