@@ -1,0 +1,6 @@
+*.suo
+*.user
+*.docstates
+_ReSharper.*
+bin
+obj
