@@ -50,6 +50,7 @@
             this.uxSetDestinationFolderManually = new System.Windows.Forms.Button();
             this.uxSelectDestinationFolder = new System.Windows.Forms.Button();
             this.uxDestinationFolder = new System.Windows.Forms.Label();
+            this.uxDeleteDuplicates = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.uxHowToOrganizeOptions.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -99,10 +100,11 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.uxDeleteDuplicates);
             this.groupBox1.Controls.Add(this.uxDebugMode);
             this.groupBox1.Location = new System.Drawing.Point(10, 363);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(225, 52);
+            this.groupBox1.Size = new System.Drawing.Size(225, 72);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Options";
@@ -127,8 +129,10 @@
             this.uxLog.Location = new System.Drawing.Point(241, 71);
             this.uxLog.Multiline = true;
             this.uxLog.Name = "uxLog";
+            this.uxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.uxLog.Size = new System.Drawing.Size(725, 412);
             this.uxLog.TabIndex = 5;
+            this.uxLog.WordWrap = false;
             // 
             // uxOrganizeByMonth
             // 
@@ -279,6 +283,16 @@
             this.uxDestinationFolder.TabIndex = 1;
             this.uxDestinationFolder.Text = "No folder selected";
             // 
+            // uxDeleteDuplicates
+            // 
+            this.uxDeleteDuplicates.AutoSize = true;
+            this.uxDeleteDuplicates.Location = new System.Drawing.Point(7, 43);
+            this.uxDeleteDuplicates.Name = "uxDeleteDuplicates";
+            this.uxDeleteDuplicates.Size = new System.Drawing.Size(110, 17);
+            this.uxDeleteDuplicates.TabIndex = 1;
+            this.uxDeleteDuplicates.Text = "Delete Duplicates";
+            this.uxDeleteDuplicates.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -331,6 +345,7 @@
         private System.Windows.Forms.Button uxSetDestinationFolderManually;
         private System.Windows.Forms.Button uxSelectDestinationFolder;
         private System.Windows.Forms.Label uxDestinationFolder;
+        private System.Windows.Forms.CheckBox uxDeleteDuplicates;
     }
 }
 

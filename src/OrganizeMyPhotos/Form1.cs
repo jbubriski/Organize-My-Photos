@@ -5,6 +5,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
+using System.Text;
+using System.Security.Cryptography;
 
 namespace OrganizeMyPhotos
 {
@@ -12,6 +14,8 @@ namespace OrganizeMyPhotos
     {
         private string _sourceFolder;
         private string _destinationFolder;
+
+        private Dictionary<string, string> _hashCodes = new Dictionary<string, string>();
 
         public Form1()
         {
@@ -40,6 +44,9 @@ namespace OrganizeMyPhotos
 
         private void uxOrganize_Click(object sender, EventArgs e)
         {
+            var sourceFolder = _sourceFolder;
+            var desinationFolder = _destinationFolder;
+
             if (uxOrganizeByDay.Checked)
             {
                 // TODO: Implement this organizational structure
@@ -58,7 +65,7 @@ namespace OrganizeMyPhotos
             }
             else if (uxOrganizeByYearThenMonthThenDay.Checked)
             {
-                OrganizeByYearThenMonthThenDay();
+                OrganizeByYearThenMonthThenDay(_sourceFolder, _destinationFolder);
             }
         }
 
@@ -74,24 +81,34 @@ namespace OrganizeMyPhotos
             FindPhotos(selectedFolder);
         }
 
-        private void OrganizeByYearThenMonthThenDay()
+        private void OrganizeByYearThenMonthThenDay(string sourceFolder, string desinationFolder)
         {
-            if (string.IsNullOrWhiteSpace(_sourceFolder))
+            if (!Directory.Exists(sourceFolder))
             {
+                //TODO: Add some UI messages about the issue.
                 return;
             }
 
-            var sourceFolder = _sourceFolder;
-            var desinationFolder = _destinationFolder;
+            if (!Directory.Exists(desinationFolder))
+            {
+                //TODO: Add some UI messages about the issue.
+                return;
+            }
+
+            var deleteDuplicates = uxDeleteDuplicates.Checked;
+            var debugMode = uxDebugMode.Checked;
 
             var photosProcessed = 0;
             var photosMoved = 0;
             var photosSkipped = 0;
+            var photosDeleted = 0;
             var directoriesCreated = 0;
 
             var photos = FindPhotos(sourceFolder);
 
             Log("\r\n\r\nProcessing Files:\r\n");
+            Log(string.Format("Moving files from :\r\n", sourceFolder));
+            Log(string.Format("To :\r\n", desinationFolder));
 
             foreach (var photo in photos)
             {
@@ -104,11 +121,51 @@ namespace OrganizeMyPhotos
                     var newFolderPath = Path.Combine(desinationFolder, newFolderName);
                     var newFilePath = Path.Combine(newFolderPath, fileInfo.Name);
 
-                    if ((fileInfo.FullName != newFilePath) && !File.Exists(newFilePath))
+                    // For easier to read logs:
+                    var relativePath = fileInfo.FullName.Replace(sourceFolder, string.Empty);
+                    var newRelativePath = Path.Combine(newFolderName, fileInfo.Name);
+
+                    if (fileInfo.FullName == newFilePath)
+                    {
+                        uxLog.AppendText(string.Format("\r\nSkipping (file in correct location): {0}", relativePath));
+                        photosSkipped++;
+                    }
+                    else if (File.Exists(newFilePath))
+                    {
+                        if (!_hashCodes.ContainsKey(newFilePath))
+                        {
+                            _hashCodes.Add(newFilePath, GetHash(newFilePath));
+                        }
+
+                        if (GetHash(fileInfo.FullName) == _hashCodes[newFilePath])
+                        {
+                            if (deleteDuplicates)
+                            {
+                                if (!debugMode)
+                                {
+                                    fileInfo.Delete();
+                                }
+
+                                uxLog.AppendText(string.Format("\r\nDeleted (Duplicate): {0}", relativePath));
+                                photosDeleted++;
+                            }
+                            else
+                            {
+                                uxLog.AppendText(string.Format("\r\nSkipped (Duplicate): {0}", relativePath));
+                                photosSkipped++;
+                            }
+                        }
+                        else
+                        {
+                            uxLog.AppendText(string.Format("\r\nSkipped (File with same name): {0}", relativePath));
+                            photosSkipped++;
+                        }
+                    }
+                    else
                     {
                         if (!Directory.Exists(newFolderPath))
                         {
-                            if (!uxDebugMode.Checked)
+                            if (!debugMode)
                             {
                                 Directory.CreateDirectory(newFolderPath);
                             }
@@ -116,32 +173,29 @@ namespace OrganizeMyPhotos
                             directoriesCreated++;
                         }
 
-                        uxLog.AppendText(string.Format("\r\nMoving: {0}\r\n\tTo: {1}", fileInfo.FullName, newFilePath));
-
-                        if (!uxDebugMode.Checked)
+                        if (!debugMode)
                         {
                             fileInfo.MoveTo(newFilePath);
-                            photosMoved++;
                         }
 
-                    }
-                    else
-                    {
-                        uxLog.AppendText(string.Format("\r\nSkipping (already exists): {0}", fileInfo.FullName));
-                        photosSkipped++;
+                        uxLog.AppendText(string.Format("\r\nMoved: {0}\r\n\tTo: {1}", relativePath, newRelativePath));
+                        photosMoved++;
                     }
                 }
                 else
                 {
                     uxLog.AppendText(string.Format("\r\nSkipping (no date): {0}", fileInfo.FullName));
-                    // TODO: Resort the photos that have no date?
+                    // TODO: Move the photos that have no date?
                     photosSkipped++;
                 }
 
                 photosProcessed++;
             }
 
-            MessageBox.Show(string.Format("Done! \r\nFound: {0} \r\nMoved: {1} \r\nSkipped: {2} \r\nDirectories Created: {3}", photosProcessed, photosMoved, photosSkipped, directoriesCreated));
+            var result = string.Format("Done! \r\nFound: {0} \r\nMoved: {1} \r\nSkipped: {2} \r\nDeleted: {3} \r\nDirectories Created: {4}", photosProcessed, photosMoved, photosSkipped, photosDeleted, directoriesCreated);
+
+            Log(result);
+            MessageBox.Show(result);
         }
 
         private void uxClearLog_Click(object sender, EventArgs e)
@@ -225,6 +279,22 @@ namespace OrganizeMyPhotos
         {
             uxDestinationFolder.Text = folderPath;
             _destinationFolder = folderPath;
+        }
+
+        private string GetHash(string filePath)
+        {
+            var stringBuilder = new StringBuilder();
+
+            using (var md5Hasher = MD5.Create())
+            using (var fileStream = File.OpenRead(filePath))
+            {
+                foreach (var bite in md5Hasher.ComputeHash(fileStream))
+                {
+                    stringBuilder.Append(bite.ToString("x2").ToLower());
+                }
+            }
+
+            return stringBuilder.ToString();
         }
 
         #endregion

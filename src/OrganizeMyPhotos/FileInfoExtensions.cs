@@ -13,11 +13,11 @@ namespace OrganizeMyPhotos
         {
             using (var fileStream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                var image = BitmapFrame.Create(fileStream);
-                var metadata = (BitmapMetadata)image.Metadata;
-
                 try
                 {
+                    var image = BitmapFrame.Create(fileStream);
+                    var metadata = (BitmapMetadata)image.Metadata;
+
                     return DateTime.Parse(metadata.DateTaken);
                 }
                 catch
