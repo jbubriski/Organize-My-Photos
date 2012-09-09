@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
-using System.Text;
-using System.Security.Cryptography;
 
 namespace OrganizeMyPhotos
 {
@@ -297,6 +297,13 @@ namespace OrganizeMyPhotos
             return stringBuilder.ToString();
         }
 
-        #endregion
+        #endregion Private Parts
+
+        private void uxDeleteEmptyFolder_Click(object sender, EventArgs e)
+        {
+            var directoryHelper = new DirectoryHelper();
+
+            directoryHelper.DeleteEmptyDirectories(_sourceFolder);
+        }
     }
 }

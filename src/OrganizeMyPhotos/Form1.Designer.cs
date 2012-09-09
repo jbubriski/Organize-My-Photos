@@ -34,6 +34,7 @@
             this.uxOrganize = new System.Windows.Forms.Button();
             this.uxOrganizeByDay = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.uxDeleteDuplicates = new System.Windows.Forms.CheckBox();
             this.uxDebugMode = new System.Windows.Forms.CheckBox();
             this.uxLog = new System.Windows.Forms.TextBox();
             this.uxOrganizeByMonth = new System.Windows.Forms.RadioButton();
@@ -50,7 +51,7 @@
             this.uxSetDestinationFolderManually = new System.Windows.Forms.Button();
             this.uxSelectDestinationFolder = new System.Windows.Forms.Button();
             this.uxDestinationFolder = new System.Windows.Forms.Label();
-            this.uxDeleteDuplicates = new System.Windows.Forms.CheckBox();
+            this.uxDeleteEmptyFolder = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.uxHowToOrganizeOptions.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -80,7 +81,7 @@
             // uxOrganize
             // 
             this.uxOrganize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.uxOrganize.Location = new System.Drawing.Point(91, 460);
+            this.uxOrganize.Location = new System.Drawing.Point(91, 481);
             this.uxOrganize.Name = "uxOrganize";
             this.uxOrganize.Size = new System.Drawing.Size(75, 23);
             this.uxOrganize.TabIndex = 2;
@@ -109,6 +110,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Options";
             // 
+            // uxDeleteDuplicates
+            // 
+            this.uxDeleteDuplicates.AutoSize = true;
+            this.uxDeleteDuplicates.Location = new System.Drawing.Point(7, 43);
+            this.uxDeleteDuplicates.Name = "uxDeleteDuplicates";
+            this.uxDeleteDuplicates.Size = new System.Drawing.Size(110, 17);
+            this.uxDeleteDuplicates.TabIndex = 1;
+            this.uxDeleteDuplicates.Text = "Delete Duplicates";
+            this.uxDeleteDuplicates.UseVisualStyleBackColor = true;
+            // 
             // uxDebugMode
             // 
             this.uxDebugMode.AutoSize = true;
@@ -130,7 +141,7 @@
             this.uxLog.Multiline = true;
             this.uxLog.Name = "uxLog";
             this.uxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.uxLog.Size = new System.Drawing.Size(725, 412);
+            this.uxLog.Size = new System.Drawing.Size(725, 433);
             this.uxLog.TabIndex = 5;
             this.uxLog.WordWrap = false;
             // 
@@ -215,7 +226,7 @@
             // uxFindPhotos
             // 
             this.uxFindPhotos.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.uxFindPhotos.Location = new System.Drawing.Point(10, 460);
+            this.uxFindPhotos.Location = new System.Drawing.Point(10, 481);
             this.uxFindPhotos.Name = "uxFindPhotos";
             this.uxFindPhotos.Size = new System.Drawing.Size(75, 23);
             this.uxFindPhotos.TabIndex = 7;
@@ -283,21 +294,22 @@
             this.uxDestinationFolder.TabIndex = 1;
             this.uxDestinationFolder.Text = "No folder selected";
             // 
-            // uxDeleteDuplicates
+            // uxDeleteEmptyFolder
             // 
-            this.uxDeleteDuplicates.AutoSize = true;
-            this.uxDeleteDuplicates.Location = new System.Drawing.Point(7, 43);
-            this.uxDeleteDuplicates.Name = "uxDeleteDuplicates";
-            this.uxDeleteDuplicates.Size = new System.Drawing.Size(110, 17);
-            this.uxDeleteDuplicates.TabIndex = 1;
-            this.uxDeleteDuplicates.Text = "Delete Duplicates";
-            this.uxDeleteDuplicates.UseVisualStyleBackColor = true;
+            this.uxDeleteEmptyFolder.Location = new System.Drawing.Point(10, 452);
+            this.uxDeleteEmptyFolder.Name = "uxDeleteEmptyFolder";
+            this.uxDeleteEmptyFolder.Size = new System.Drawing.Size(156, 23);
+            this.uxDeleteEmptyFolder.TabIndex = 8;
+            this.uxDeleteEmptyFolder.Text = "Delete Empty Folders";
+            this.uxDeleteEmptyFolder.UseVisualStyleBackColor = true;
+            this.uxDeleteEmptyFolder.Click += new System.EventHandler(this.uxDeleteEmptyFolder_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(978, 495);
+            this.ClientSize = new System.Drawing.Size(978, 516);
+            this.Controls.Add(this.uxDeleteEmptyFolder);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.uxFindPhotos);
@@ -346,6 +358,7 @@
         private System.Windows.Forms.Button uxSelectDestinationFolder;
         private System.Windows.Forms.Label uxDestinationFolder;
         private System.Windows.Forms.CheckBox uxDeleteDuplicates;
+        private System.Windows.Forms.Button uxDeleteEmptyFolder;
     }
 }
 
